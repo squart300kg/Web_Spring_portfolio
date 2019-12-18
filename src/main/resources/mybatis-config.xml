@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- typeAliases태그를 사용하면 boardMapper.xml에서 매번 
+		 parameterType, resultType을 패키지까지 포함된 클래스명을
+		 작성하는 수고를 덜어준다. -->
+  <typeAliases>
+  	<package name="com.spring.workout.dto"/> 
+    <package name="com.spring.mybatisSetting2.dto"/>  
+    <package name="te.pr.domain"/>  
+    <package name="com.shopping.dto"/>        
+  </typeAliases>
+  
+</configuration>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<!--
+	식별의 용이함을 위해서 BoardMapper.xml의 각 SQL id 속성값은
+	org.edu.dao.BoardDAO와 동일하게 한다.	
+	-->	
+	
+<mapper namespace="product">
+
+	
+    <!-- 상품 전체 목록 -->
+    <select id="listProduct" resultType="com.spring.workout.dto.ProductDto">
+        SELECT * 
+        FROM product 
+        ORDER BY product_title
+    </select>
+    
+    <!-- 상품 상세보기 -->
+    <select id="detailProduct" resultType="com.spring.workout.dto.ProductDto">
+        SELECT *        	
+        FROM product
+        WHERE product_id = #{product_id}
+    </select> 
+  
+
+<!--     
+/*	////////////////////////////////////////////////////////////////////////////////////////
+	장바구니
+*/	////////////////////////////////////////////////////////////////////////////////////////
+-->
+
+	<!-- 장바구니 추가 -->
+    <insert id="insertCart">
+		INSERT INTO cart
+			(buyer, product_id, product_title, buy_price, buy_count, product_image, product_price) 
+		VALUES
+			(#{buyer}, #{product_id}, #{product_title}, #{buy_price}, #{buy_count}, #{product_image}, #{product_price})
+    </insert>
+ 
+ 	<!-- 장바구니 목록 -->
+	<select id="listCart" resultType="com.shopping.dto.CartDto">
+		SELECT 
+			c.cart_id, u.id, c.product_id, c.product_title, c.buy_price, c.buy_count, c.product_image, c.product_price
+		FROM 
+			cart c, userInfo u
+		WHERE 
+			u.id = #{buyer}
+		ORDER BY
+			c.cart_id
+	</select>
+	
+	<!-- 장바구니 삭제 -->
+	<delete id="deleteCart">
+		DELETE FROM cart 
+		WHERE cart_id = #{cart_id}
+	</delete>
+    
+    <!-- 장바구니 수량 수정 -->
+    <update id="modifyCart">
+    	UPDATE 
+    		cart 
+    	SET 
+    		buy_count = #{buy_count}, buy_price = buy_count * product_price
+    	WHERE 
+    		cart_id = #{cart_id}
+    </update>
+    
+    <!-- 기존 상품 존재여부 -->
+ 	<select id="countCart" resultType="int">
+		SELECT COUNT(*) FROM cart 
+		WHERE buyer= #{buyer} AND product_id = #{product_id}
+	</select>
+    
+    <!-- 기존 상품이 존재하면 수량 수정 -->
+    <update id="updateCart">
+		UPDATE cart	SET buy_count = buy_count + #{buy_count} 
+		WHERE buyer= #{buyer} AND product_id = #{product_id}
+	</update>
+   
+   
+<!--     
+/*	////////////////////////////////////////////////////////////////////////////////////////
+	구매
+*/	////////////////////////////////////////////////////////////////////////////////////////
+-->
+
+	<select id="buyListCart" resultType="com.shopping.dto.CartDto">
+		SELECT c.cart_id, u.id, c.product_id, c.product_title, c.buy_price, c.buy_count, c.product_image, c.product_price
+		FROM cart c, userInfo u
+		WHERE u.id = #{buyer}
+	</select>
+
+	<select id="buyListUser" resultType="com.spring.mybatisSetting2.dto.SquartDto">
+		SELECT u.name, u.email, u.address
+		FROM userInfo u
+		WHERE u.id = #{CartDto.buyer}
+	</select>
+	
+	<!-- (무통장입금)은행 정보 -->
+   	<select id="bank" resultType="com.shopping.dto.BankDto">
+   		SELECT *
+   		FROM bank
+   	</select>
+
+	<!-- 주문 정보 추가 -->
+    <insert id="insertDelivery">
+		INSERT INTO buy
+			(buy_num, buyer, product_id, product_title, buy_price, buy_count, product_image, 
+			 buy_date, account, delivery_name, delivery_tel, delivery_address, product_price) 
+		VALUES
+			(5678, #{buyer}, #{product_id}, #{product_title}, #{buy_price}, #{buy_count}, #{product_image},
+			 now(), #{account}, #{delivery_name}, #{delivery_tel}, #{delivery_address}, #{product_price}) 
+    </insert>
+
+</mapper>

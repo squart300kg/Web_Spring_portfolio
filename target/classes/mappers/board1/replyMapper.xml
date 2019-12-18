@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+MyBatis는 기본적으로 PreparedStatement를 이용해서 처리한다.
+개발자는 PreparedStatement에 들어가는 파라미터를 사용할 때는
+'#{}' 기호를 사용해서 처리한다.
+'#{}' 사용규칙
+	1. 파라미터가 여러 속성을 가진 객체인 경우 '#{}'는
+	   getNum() 또는 setNum()을 의미한다.
+	2. 파라미터가 하나이고, 기본자료형이나 문자열인 경우는
+	   값이 그대로 전달된다.
+	3. 파라미터가 Map타입인 경우 '#{num}'는 Map객체의 키값이
+	   'num'인 값을 찾는다.
+-->
+
+<!--
+패키지익스플로러에서 프로젝트 경로구조와 상관없이 개발자가
+mapper태그의 namespace속성값을 지정한 것이 프로젝트에서 통용되는
+경로명으로 인식된다.
+-->
+<mapper namespace="te.pr.mapper.replyMapper1">
+	<!--
+	식별의 용이함을 위해서 BoardMapper.xml의 각 SQL id 속성값은
+	org.edu.dao.BoardDAO와 동일하게 한다.	
+	-->
+	
+
+
+	<insert id="insertrereply">
+		insert into reply1 (writer, content, ip, re_step, re_level ,num)
+		values(#{writer}, #{content}, #{ip}, #{rnum},#{re_level}+1, #{num})
+	</insert>
+
+	
+	
+	<insert id="insertreply">
+		insert into reply1 (writer, content, ip, re_step, re_level ,num)
+		values(#{writer}, #{content}, #{ip}, #{re_step},#{re_level}, #{num})
+	</insert>
+	
+	<select id="listReply" resultType="te.pr.domain.replyVO">
+		select 
+			*
+		from 
+			reply1
+		where 
+			num = #{num}
+		ORDER BY 
+			re_step ASC, re_level ASC
+	</select>
+	
+	
+	<select id ="maxRnum" resultType="int" >
+	SELECT MAX(rnum) FROM reply1 where num =#{num}
+	
+	</select>
+	
+	
+	<update id="updateStep">
+	
+	update reply1 set re_step = #{re_step} where rnum = #{rnum} 
+	
+	</update>
+	
+	<update id="updateReply">
+	
+	update reply1 set content = #{content} where rnum = #{rnum} 
+	
+	</update>
+	
+	
+	
+	
+	<delete id="delRe">
+	
+	delete from reply1 where rnum = #{rnum}
+	
+	
+	</delete>
+
+	<delete id="delReRe">
+	
+	delete from reply1 where re_step = #{rnum}
+	
+	
+	</delete>
+	
+	<select id="selectLevel" resultType="int">
+	
+	select re_level
+	from reply1
+	where rnum = #{rnum}
+	
+	</select>
+	
+	
+	
+	<select id="cModal" resultType="replyVO">
+	
+	select 
+		writer, content
+	from 
+		reply1
+	where
+		rnum = #{rnum}		
+		
+	
+	
+	</select>
+	
+	<select id="likeCheck" resultType="likeHistoryVO">
+	
+	select 
+		*
+	from 
+		likeHistory1
+	where
+		rnum = #{rnum} and lid = #{lid}
+	
+	</select>
+	
+	<insert id="insertLH">
+		insert into likeHistory1 (lid , rnum)
+		values(#{lid} , #{rnum})
+	</insert>
+	
+	<update id="likeRe">
+		update reply1 set likecount = likecount + 1 where rnum = #{rnum} 
+	
+	</update>
+	
+	
+	
+</mapper>

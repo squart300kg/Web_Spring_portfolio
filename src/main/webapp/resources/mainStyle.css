@@ -1,0 +1,96 @@
+
+.navbar {
+margin-bottom: 50px;
+border-radius: 0;
+}
+
+#jumbotron {
+margin-bottom: 0;
+background-color: white !important;
+}
+
+footer {
+background-color: #f2f2f2;
+padding: 25px;
+}
+
+.mainLogo{
+color:black;
+text-decoration:none !important;
+}    
+    /* Remove the jumbotron's default bottom margin */ 
+   
+    /* Add a gray background color and some padding to the footer */
+
+
+.childSquart{
+border-radius :50%;
+margin :0 0 0 400px;
+}
+.mainLogo{
+color:black;
+text-decoration:none !important;
+}
+#myNavbar{
+border:none;
+border:0px;
+margin:0px;
+padding:0px;
+font: 67.5% "Lucida Sans Unicode", "Bitstream Vera Sans", "Trebuchet Unicode MS", "Lucida Grande", Verdana, Helvetica, sans-serif;
+font-size:14px;
+font-weight:bold;
+text-align: center;
+}
+
+#myNavbar li a{
+color:#FFFFFF;
+display:block;
+font-weight:normal;
+line-height:50px;
+margin:0px;
+padding:0px 25px;
+text-align:center;
+text-decoration:none;
+}
+
+#myNavbar li a:hover{
+background: rgb(71,71,71);
+color:#FFFFFF;
+text-decoration:none;
+}
+
+#myNavbar li ul{
+display:none; /* 평상시에는 드랍메뉴가 안보이게 하기 */
+height:auto;
+padding:0px;
+margin:0px;
+border:0px;
+position:absolute;
+width:200px;
+z-index:200;
+/*top:1em;
+/*left:0;*/
+}
+
+#myNavbar li:hover ul{
+display:block; /* 마우스 커서 올리면 드랍메뉴 보이게 하기 */
+}
+
+#myNavbar li li {
+background: rgb(109,109,109);
+display:block;
+float:none;
+margin:0px;
+padding:0px;
+width:200px;
+}
+
+#myNavbar li ul a{
+display:block;
+height:50px;
+font-size:12px;
+font-style:normal;
+margin:0px;
+padding:0px 10px 0px 15px;
+text-align:left;
+}

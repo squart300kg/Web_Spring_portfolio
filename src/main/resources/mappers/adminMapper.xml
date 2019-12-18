@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+MyBatis는 기본적으로 PreparedStatement를 이용해서 처리한다.
+개발자는 PreparedStatement에 들어가는 파라미터를 사용할 때는
+'#{}' 기호를 사용해서 처리한다.
+'#{}' 사용규칙
+	1. 파라미터가 여러 속성을 가진 객체인 경우 '#{}'는
+	   getNum() 또는 setNum()을 의미한다.
+	2. 파라미터가 하나이고, 기본자료형이나 문자열인 경우는
+	   값이 그대로 전달된다.
+	3. 파라미터가 Map타입인 경우 '#{num}'는 Map객체의 키값이
+	   'num'인 값을 찾는다.
+-->
+
+<!--
+패키지익스플로러에서 프로젝트 경로구조와 상관없이 개발자가
+mapper태그의 namespace속성값을 지정한 것이 프로젝트에서 통용되는
+경로명으로 인식된다.
+-->
+	
+<mapper namespace = "com.spring.workout.mapper.AdminMapper" >	
+	<!--
+	식별의 용이함을 위해서 BoardMapper.xml의 각 SQL id 속성값은
+	org.edu.dao.BoardDAO와 동일하게 한다.	
+	-->
+	
+    <!--////////////////////////////////////////////////////////////////////////////////-->
+	<!-- 관리자 로그인 체크 -->
+	<select id="adminLoginCheck" resultType="String">
+		SELECT aid 
+		FROM admin
+		WHERE aid = #{aid} AND apw = #{apw}
+	</select>
+	
+	<!--  
+	<select id="productList" resultType="map">
+		select * from product order by product_id desc, reg_date desc
+	</select>
+	-->
+	<!--////////////////////////////////////////////////////////////////////////////////-->
+
+	<!--상품 전체목록 조회 및 검색 조회까지 -->
+	<select id="productList" resultType="map"><!-- com.spring.workout.dto.ProductDto -->
+	    SELECT * 
+	    FROM product
+        where product_id > 0
+	    <!-- WHERE절을 include 태그로 삽입 -->
+	    <include refid="productSearch"></include>
+	    order by product_id desc, reg_date desc
+	</select>
+	 
+	<!-- 상품 게시글 레코드 갯수 -->
+	<select id="countProduct" resultType="int">
+	    SELECT COUNT(*) FROM product
+        where product_id > 0
+	    <!-- WHERE절을 include 태그로 삽입 -->
+	    <include refid="productSearch"></include>
+	</select>
+	 
+	<!-- sql code 조각 -->
+	<!-- 반복되는 sql의 일부를 sql태그를 이용하여 따로 빼둘수 있다. -->
+	<!--<sql id="search">
+	    <choose>
+	        검색옵션이 전체 검색일 경우
+	        <when test="searchOption == 'all'">
+	            WHERE product_title like '%'||#{keyword}||'%'
+	            OR product_kind like '%'||#{keyword}||'%'
+	        </when>
+	        전체 검색이 아닐 경우
+	        <otherwise>
+	            WHERE ${searchOption} like '%'||#{keyword}||'%'
+	        </otherwise>
+	    </choose>
+	</sql>
+    -->
+
+    <sql id="productSearch">
+	    	
+	    	<if test="searchOption != 'all'">
+				<if test="searchOption == 'product_title'">
+					AND product_title LIKE CONCAT('%' , #{keyword}, '%')
+				</if>
+				<if test="searchOption == 'product_kind'">
+					AND product_kind LIKE CONCAT('%' , #{keyword}, '%')
+				</if>
+			</if>
+	    	<if test="searchOption == 'all'">
+					AND product_title LIKE CONCAT('%' , #{keyword}, '%')
+                    OR product_kind LIKE CONCAT('%' , #{keyword}, '%')
+			</if>
+	    
+	</sql>
+
+	<insert id="productInsert">
+		insert into product (product_kind, product_title, product_price, product_count,	brand, product_image, product_content, discount_rate)
+		values(#{product_kind}, #{product_title}, #{product_price}, #{product_count}, #{brand}, #{product_image}, #{product_content}, #{discount_rate})
+	</insert>
+	
+    
+    <select id="productRead" resultType="ProductDto">
+		select
+			product_id, product_kind, product_title, product_price, product_count,	brand, product_image, product_content, discount_rate
+		from
+			product
+		where
+			product_id = #{product_id}
+	</select>
+	
+	<update id="productUpdate">
+        update product SET
+        	product_kind	= #{product_kind},
+            product_title	= #{product_title},
+            product_price	= #{product_price},
+            product_count	= #{product_count},
+            brand			= #{brand},
+            product_image	= #{product_image},
+            product_content	= #{product_content},
+            discount_rate	= #{discount_rate},
+            reg_date		= now()
+        where
+            product_id = #{product_id}
+    </update>
+    
+    <delete id="productDelete">
+		delete from product where product_id=#{product_id}
+	</delete>
+
+   <!--////////////////////////////////////////////////////////////////////////////////-->
+
+    <!--주문 목록 조회 및 검색 조회까지 -->
+	<select id="orderedList" resultType="map"><!-- com.spring.workout.dto.BuyDto -->
+	    SELECT * 
+	    FROM buy
+        where buy_id > 0
+	    <!-- WHERE절을 include 태그로 삽입 -->
+	    <include refid="orderSearch"></include>
+	    order by buy_date desc
+	</select>
+	 
+	<!-- 상품 게시글 레코드 갯수 -->
+	<select id="countOrder" resultType="int">
+	    SELECT COUNT(*) FROM buy
+        where buy_id > 0
+	    <!-- WHERE절을 include 태그로 삽입 -->
+	    <include refid="orderSearch"></include>
+	</select>
+	 
+    <sql id="orderSearch">
+	    	
+	    	<if test="searchOption != 'all'">
+				<if test="searchOption == 'buyer'">
+					AND buyer LIKE CONCAT('%' , #{keyword}, '%')
+				</if>
+				<if test="searchOption == 'delivery_tel'">
+					AND delivery_tel LIKE CONCAT('%' , #{keyword}, '%')
+				</if>
+			</if>
+	    	<if test="searchOption == 'all'">
+					AND buyer LIKE CONCAT('%' , #{keyword}, '%')
+                    OR delivery_tel LIKE CONCAT('%' , #{keyword}, '%')
+			</if>
+	    
+	</sql>
+
+    <!-- order read -->
+    <select id="orderRead" resultType="BuyDto">
+		select
+			*
+		from
+			buy
+		where
+			buy_id = #{buy_id}
+	</select>
+
+    <!-- order Update -->
+	<update id="orderUpdate">
+        update buy set
+            buy_count           = #{buy_count},
+            account             = #{account},
+            delivery_name       = #{delivery_name},
+            delivery_tel        = #{delivery_tel},
+            delivery_address    = #{delivery_address},
+            sanction            = #{sanction}
+        where
+            buy_id = #{buy_id}
+    </update>
+
+    <!-- order Delete -->
+    <delete id="orderDelete">
+		delete from buy where buy_id=#{buy_id}
+	</delete>
+
+
+
+   <!--////////////////////////////////////////////////////////////////////////////////-->
+
+    <!--회원조회 및 검색 조회까지 -->
+	<select id="userList" resultType="map"><!-- com.spring.workout.dto.BuyDto -->
+	    SELECT * 
+	    FROM userinfo
+        where num > 0
+	    <!-- WHERE절을 include 태그로 삽입 -->
+	    <include refid="userSearch"></include>
+	    order by num desc
+	</select>
+	 
+	<!-- 회원 게시글 레코드 갯수 -->
+	<select id="countUser" resultType="int">
+	    SELECT COUNT(*) FROM userinfo
+        where num > 0
+	    <!-- WHERE절을 include 태그로 삽입 -->
+	    <include refid="userSearch"></include>
+	</select>
+	 
+    <sql id="userSearch">
+	    	
+	    	<if test="searchOption != 'all'">
+				<if test="searchOption == 'id'">
+					AND id LIKE CONCAT('%' , #{keyword}, '%')
+				</if>
+				<if test="searchOption == 'name'">
+					AND name LIKE CONCAT('%' , #{keyword}, '%')
+				</if>
+			</if>
+	    	<if test="searchOption == 'all'">
+					AND id LIKE CONCAT('%' , #{keyword}, '%')
+                    OR name LIKE CONCAT('%' , #{keyword}, '%')
+			</if>
+	    
+	</sql>
+
+    <!-- userinfo read -->
+    <select id="userRead" resultType="SquartDto">
+		select
+			*
+		from
+			userinfo
+		where
+			num = #{num}
+	</select>
+    
+
+    <!-- userinfo Update -->
+	<update id="userUpdate">
+        update userinfo set
+            password    = #{password},
+            name        = #{name},
+            email       = #{email},
+            address     = #{address}
+        where
+            num = #{num}
+    </update>
+
+
+    <!-- order Delete -->
+    <delete id="userDelete">
+		delete from userinfo where num=#{num}
+	</delete>
+
+
+</mapper>

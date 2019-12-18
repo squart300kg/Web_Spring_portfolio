@@ -1,0 +1,28 @@
+#container {
+	margin-top: 50px;
+}
+
+#sListTable tr td {
+	text-align:center;
+}
+
+#detailContainer {
+	margin-top: 50px;
+}
+
+#cartContainer {
+	margin-top: 50px;
+}
+
+#cartTable, #cartTable th{
+	text-align:center;
+}
+
+#cartTd {
+	text-align:right;
+}
+
+#buyTable, #buyTable th{
+	text-align:center;
+}
+

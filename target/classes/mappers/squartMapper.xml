@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<!--
+	식별의 용이함을 위해서 BoardMapper.xml의 각 SQL id 속성값은
+	org.edu.dao.BoardDAO와 동일하게 한다.	
+	-->
+	
+<mapper namespace = "squart">	
+	
+	<insert id="insert">
+		insert into userInfo (id, password, name, email, address)
+		values(#{id}, #{password}, #{name}, #{email}, #{address})
+	</insert>
+	
+	<select id="idCheck" resultType = "SquartDto">
+		select * from userInfo where id = #{id}
+	</select>
+	
+	<select id="emailCheck" resultType = "SquartDto">
+		select * from userInfo where email = #{email}
+	</select>
+	
+	<update id="createAuthkey">
+		update userInfo set authKey = #{authKey} where email = #{email}
+	</update>
+	
+	<update id="updateAuth">
+		update userInfo set authKey = '1' where id = #{id}
+	</update>
+	
+	<select id="getOneUser" resultType = "SquartDto">
+		SELECT * FROM userInfo WHERE id = #{id}
+	</select>
+	
+	<update id="searchPassword">
+		update userInfo set password = #{password} where id = #{id}
+	</update>
+	
+	<update id="updateUserInfo">
+		update userInfo set password = #{password}, name = #{name}, address = #{address} where id = #{id}
+	</update>
+</mapper>
+	
+	
+
+
+

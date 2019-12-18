@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		
+		<property name="driverClassName"  value="com.mysql.jdbc.Driver"></property>
+		<property name="url"   value="jdbc:mysql://127.0.0.1:3306/workout"></property>
+		<property name="username" value="workout"></property>
+		<property name="password" value="soldesk2"></property>
+	</bean>	
+	
+	<bean id="sqlSessionFactory"  class="org.mybatis.spring.SqlSessionFactoryBean">	   
+	 	<property name="dataSource" ref="dataSource" />		 	
+	 	<property name="configLocation" value="classpath:/mybatis-config.xml"></property>		 					
+		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>					
+	</bean>	 
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"  destroy-method="clearCache">
+	  <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
+	</bean>
+	
+	<bean id = "messageSource" class = "org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value = "classpath:message/label"></property>
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+	
+	<bean id = "mailSender" class = "org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name = "host" value = "smtp.gmail.com"/>
+		<property name = "port" value = "587"/>
+		<property name="username" value = "a01039329810"/>
+		<property name = "password" value = "356vkf7593."/>
+		
+		<property name="javaMailProperties">
+			<props>
+	            <prop key="mail.transport.protocol">smtp</prop>
+	            <prop key="mail.smtp.auth">true</prop>
+	            <prop key="mail.smtp.starttls.enable">true</prop>
+	            <prop key="mail.debug">true</prop>
+	         </props>
+	     </property>
+	</bean>
+	
+	<bean id = "transactionManager" class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name = "dataSource" ref = "dataSource"></property>
+	</bean>
+	<context:component-scan base-package="com.shopping.dao"></context:component-scan><!-- DB와 상호작용 하기 위한 dao스캔 -->
+	<context:component-scan base-package="com.shopping.service"></context:component-scan><!-- DB와 상호작용한 결과값으로 특정 로직을 수행하는 service스캔 -->
+	<context:component-scan base-package="com.spring.mybatisSetting2.dao"></context:component-scan><!-- DB와 상호작용 하기 위한 dao스캔 -->
+	<context:component-scan base-package="com.spring.mybatisSetting2.service"></context:component-scan><!-- DB와 상호작용한 결과값으로 특정 로직을 수행하는 service스캔 -->
+	<context:component-scan base-package="te.pr.service"></context:component-scan>
+	<context:component-scan base-package="te.pr.dao"></context:component-scan>
+	<context:component-scan base-package="com.spring.workout.dao"></context:component-scan><!-- DB와 상호작용 하기 위한 dao스캔 -->
+	<context:component-scan base-package="com.spring.workout.service"></context:component-scan><!-- DB와 상호작용한 결과값으로 특정 로직을 수행하는 service스캔 -->
+	<context:component-scan base-package="com.spring.workout.util"></context:component-scan>
+</beans>
